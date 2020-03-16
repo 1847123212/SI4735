@@ -764,9 +764,9 @@ void SI4735::getStatus(uint8_t INTACK, uint8_t CANCEL)
     do
     {
         waitToSend();
-        Wire.requestFrom(deviceAddress, 7);
+        Wire.requestFrom(deviceAddress, 8); // Check it
         // Gets response information
-        for (uint8_t i = 0; i < 7; i++)
+        for (uint8_t i = 0; i < 8; i++)
             currentStatus.raw[i] = Wire.read();
     } while (currentStatus.resp.ERR); // If error, try it again
     waitToSend();
@@ -854,9 +854,9 @@ void SI4735::setAvcAmMaxGain( uint8_t gain) {
     sendProperty(AM_AUTOMATIC_VOLUME_CONTROL_MAX_GAIN, aux);
 }
 
-
- /*
- * Queries the status of the Received Signal Quality (RSQ) of the current channel
+/*
+ * Queries the status of the Received Signal Quality (RSQ) of the current channel.
+ * This method sould be called berore call getCurrentRSSI(), getCurrentSNR() etc.
  * Command FM_RSQ_STATUS
  * See Si47XX PROGRAMMING GUIDE; AN332; pages 75 and 141
  * 
@@ -873,12 +873,12 @@ void  SI4735::getCurrentReceivedSignalQuality(uint8_t INTACK)
         if (currentTune == FM_TUNE_FREQ)
         { // FM TUNE
             cmd = FM_RSQ_STATUS;
-            sizeResponse = 7;
+            sizeResponse = 8; // Check it
         }
         else
         { // AM TUNE
             cmd = AM_RSQ_STATUS;
-            sizeResponse = 5;
+            sizeResponse = 6; // Check it
         }
 
         waitToSend();
@@ -889,14 +889,15 @@ void  SI4735::getCurrentReceivedSignalQuality(uint8_t INTACK)
         Wire.write(arg); // send B00000001
         Wire.endTransmission();
 
-        //do
-        // {
+        // Check it
+        // do
+        //{
             waitToSend();
             Wire.requestFrom(deviceAddress, sizeResponse);
             // Gets response information
             for (uint8_t i = 0; i < sizeResponse; i++)
                 currentRqsStatus.raw[i] = Wire.read();
-       //  } while (currentRqsStatus.resp.ERR); // Try again if error found
+        //} while (currentRqsStatus.resp.ERR); // Try again if error found
 }
 
 /*

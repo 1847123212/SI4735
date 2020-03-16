@@ -255,6 +255,7 @@ This library has been written for the Arduino platform and has been successfully
 | Due	| all digital pins | 20 (SDA/SDIO), 21 (SCL/SCLK) | Yes  |  No |
 | 101	| all digital pins. <br> Only pins 2, 5, 7, 8, 10, 11, 12, 13 work with CHANGE| -  | Not tested | No |
 | ESPRESSIF ESP32 | all GPIO pins |  Most pins (usually 21 and 22) | Yes | No | 
+| STM32F103  | PA0, PA1 | PB6 (SCL) and PB7(SDA) | Yes | No |
 
 
 
@@ -373,6 +374,7 @@ The table below shows the some boards where this library has been successfully t
 | BlueDuino 3.3V (ATmega-32u4) | No | 2 and 3 | 10 | [More...](https://wiki.aprbrother.com/en/BlueDuino_rev2.html) |
 | Arduino Mini Pro | Yes | 2 and 3 |  10 | [More...](https://store.arduino.cc/usa/arduino-pro-mini) |
 | STM32F746G-DISCO | No | - | - | [More...](https://www.st.com/en/evaluation-tools/32f746gdiscovery.html?fbclid=IwAR2D9OwhInHQ8WYxeflJQ7QV2aNscFbfcbeblaFcYq0angJIjCKmkQBPTBc) |
+| STM32F103 Series  |  No | PB6 (SCL) and PB7(SDA) | PA12 | [More...](https://circuitdigest.com/microcontroller-projects/getting-started-with-stm32-development-board-stm32f103c8-using-arduino-ide) |
 
 * [ˆ4] It seams that in some ESP32 board, the I²C bus is not configured prorpelly by default. However, you can set almost any pin on ESP32 to setup I²C capabilities. All you have to do is call __Wire.begin(SDA, SCL);__ where SDA and SCL are the ESP32 GPIO pins. The code below shows that.
 * [^5] You can use the pin 12 too.  
@@ -1823,10 +1825,8 @@ See  Si47XX PROGRAMMING GUIDE; AN332; pages 75 and 141
 
 ```cpp
 /*  
- * Queries the status of the Received Signal Quality (RSQ) of the current channel. The methods getCurrentRSSI(), getCurrentSNR() etc,
- * depend on this method. So, it have to be called first. However, this method is called internally by getFrequency(). In this case,
- * you do not need to use getCurrentReceivedSignalQuality if you are using getFrequency.
- * In other words, you can call getCurrentRSSI(), getCurrentSNR() etc, after call getFrequency().
+ * Queries the status of the Received Signal Quality (RSQ) of the current channel. The methods getCurrentRSSI(), * * getCurrentSNR() etc,
+ * Call this method first and then you can call getCurrentRSSI(), getCurrentSNR() etc. 
  * 
  * @param INTACK Interrupt Acknowledge; 0 = Interrupt status preserved; 1 = Clears RSQINT, SNRHINT, SNRLINT, RSSIHINT, RSSILINT
  */

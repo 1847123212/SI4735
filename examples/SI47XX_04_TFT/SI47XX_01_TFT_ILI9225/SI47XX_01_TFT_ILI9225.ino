@@ -120,8 +120,6 @@ uint8_t currentMode = FM;
 uint16_t currentStep = 1;
 
 
-
-
 char bufferDisplay[40]; // Useful to handle string
 char bufferFreq[15];
 char bufferBFO[15];
@@ -411,6 +409,7 @@ void showRSSI()
 {
   int rssiLevel;
   int snrLevel;
+  int maxAux = tft.maxX();
 
   tft.setFont(Terminal6x8);
   if (currentMode == FM)
@@ -419,11 +418,14 @@ void showRSSI()
     printValue(150, 60, bufferStereo, bufferDisplay, COLOR_CYAN, 7);
   }
 
-  rssiLevel = 47 + map(rssi, 0, 127, 0, ( tft.maxX()  - 43) );
-  snrLevel = 47 + map(snr, 0, 127, 0, ( tft.maxX()  - 43) );
+  // Check it
+  // RSSI: 0 to 127 dBuV
+  rssiLevel = 47 + map(rssi, 0, 127, 0, ( maxAux  - 43) );
+  // SNR.: 0 to 127 dB
+  snrLevel = 47 + map(snr, 0, 127, 0, ( maxAux  - 43) );
 
-  tft.fillRectangle(46, 151,  tft.maxX() - 3, 155, COLOR_BLACK);
-  tft.fillRectangle(46, 164, tft.maxX() - 3, 168, COLOR_BLACK);
+  tft.fillRectangle(46, 151,  maxAux - 3, 155, COLOR_BLACK);
+  tft.fillRectangle(46, 164, maxAux - 3, 168, COLOR_BLACK);
 
   tft.fillRectangle(46, 151,  rssiLevel, 155, COLOR_LIGHTCYAN);
   tft.fillRectangle(46, 164, snrLevel, 168, COLOR_LIGHTCYAN);
@@ -707,12 +709,11 @@ void loop()
   if ((millis() - elapsedRSSI) > MIN_ELAPSED_RSSI_TIME * 6)
   {
     si4735.getCurrentReceivedSignalQuality();
-    // int aux = si4735.getReceivedSignalStrengthIndicator();
     int aux = si4735.getCurrentRSSI();
     if (rssi != aux)
     {
       rssi = aux;
-      snr = si4735.getStatusSNR();
+      snr = si4735.getCurrentSNR();
       showRSSI();
     }
     elapsedRSSI = millis();
